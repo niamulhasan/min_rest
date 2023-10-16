@@ -1,18 +1,21 @@
 enum HttpStatusType {
   /// 1xx: Informational - Request received, continuing process
   informational,
+
   /// 2xx: Success - The action was successfully received, understood, and accepted
   success,
+
   /// 3xx: Redirection - Further action must be taken in order to complete the request
   redirection,
+
   /// 4xx: Client Error - The request contains bad syntax or cannot be fulfilled
   clientError,
+
   /// 5xx: Server Error - The server failed to fulfill an apparently valid request
   serverError,
 }
 
 class HttpStatus {
-
   static bool isSuccess(int code) {
     return code >= 200 && code < 300;
   }
@@ -50,7 +53,6 @@ class HttpStatus {
   static const int accepted = 202;
   static const int nonAuthoritativeInformation = 203;
   static const int noContent = 204;
-
 
   //client error responses
   static const int badRequest = 400;
@@ -93,7 +95,4 @@ class HttpStatus {
   static const int loopDetected = 508;
   static const int notExtended = 510;
   static const int networkAuthenticationRequired = 511;
-
 }
-
-

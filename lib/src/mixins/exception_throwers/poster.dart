@@ -10,18 +10,15 @@ mixin MinRestPoster {
   ///Pass your [dataModel.toJson] as [data].
   ///Pass your [DataModel.fromJson] function as [deSerializer].
   ///[token] is the bearer token.
-  Future<M> post<M>(
-      String uri, Map<String, dynamic> data, M Function(Map<String, dynamic> json) deSerializer,
+  Future<M> post<M>(String uri, Map<String, dynamic> data,
+      M Function(Map<String, dynamic> json) deSerializer,
       {String token = ""}) async {
-
-    http.Response res = await http.post(
-      Uri.parse(baseUrl + uri),
-      headers: {
-        "Authorization" : "Bearer $token",
-        "Content-Type" : "application/json"
-      },
-      body: jsonEncode(data)
-    );
+    http.Response res = await http.post(Uri.parse(baseUrl + uri),
+        headers: {
+          "Authorization": "Bearer $token",
+          "Content-Type": "application/json"
+        },
+        body: jsonEncode(data));
     if (HttpStatus.isSuccess(res.statusCode)) {
       return deSerializer(jsonDecode(res.body));
     } else {

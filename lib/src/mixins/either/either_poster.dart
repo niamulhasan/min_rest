@@ -18,22 +18,21 @@ mixin MinRestPosterErrorOr {
       Map<String, dynamic> data,
       M Function(Map<String, dynamic> json) deSerializer,
       {String token = ""}) async {
-   // try {
-     http.Response res = await http.post(
-         Uri.parse(baseUrl + uri),
-         headers: {
-           "Authorization": "Bearer $token",
-           "Content-Type": "application/json"
-         },
-         body: jsonEncode(data)
-     );
-     if (HttpStatus.isSuccess(res.statusCode)) {
-       return right(deSerializer(jsonDecode(res.body)));
-     } else {
-       return left(MinRestError(res.statusCode, res.body, res.request?.url.toString()));
-     }
-   // } catch (e) {
-   //   return left(MinRestError(0, "Error Loading Data", e.toString()));
-   // }
+    // try {
+    http.Response res = await http.post(Uri.parse(baseUrl + uri),
+        headers: {
+          "Authorization": "Bearer $token",
+          "Content-Type": "application/json"
+        },
+        body: jsonEncode(data));
+    if (HttpStatus.isSuccess(res.statusCode)) {
+      return right(deSerializer(jsonDecode(res.body)));
+    } else {
+      return left(
+          MinRestError(res.statusCode, res.body, res.request?.url.toString()));
+    }
+    // } catch (e) {
+    //   return left(MinRestError(0, "Error Loading Data", e.toString()));
+    // }
   }
 }

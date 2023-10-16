@@ -28,8 +28,9 @@ mixin MinRestMultipartPosterErrorOr {
     // for (String filePath in filePaths) {
     //   request.files.add(await http.MultipartFile.fromPath('image', filePath));
     // }
-    for( Map<String, String> imageItem in filePaths){
-      request.files.add(await http.MultipartFile.fromPath(imageItem.keys.first, imageItem.values.first));
+    for (Map<String, String> imageItem in filePaths) {
+      request.files.add(await http.MultipartFile.fromPath(
+          imageItem.keys.first, imageItem.values.first));
     }
 
     request.headers.addAll({

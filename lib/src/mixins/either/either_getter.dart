@@ -12,20 +12,20 @@ mixin MinRestGetterErrorOr {
   ///[uri] is resource path after the base url.
   ///Pass your [DataModel.fromJson] function as [deSerializer].
   ///[token] is the bearer token.
-  Future<Either<MinRestError, M>> getErrorOr<M>(String uri, M Function(Map<String, dynamic> json) deSerializer, {String token = ""}) async {
+  Future<Either<MinRestError, M>> getErrorOr<M>(
+      String uri, M Function(Map<String, dynamic> json) deSerializer,
+      {String token = ""}) async {
     // try {
-      http.Response res = await http.get(
-          Uri.parse(baseUrl + uri),
-          headers: {
-            "Authorization" : "Bearer $token",
-            "Content-Type" : "application/json"
-          }
-      );
-      if(HttpStatus.isSuccess(res.statusCode)) {
-        return right(deSerializer(jsonDecode(res.body)));
-      } else {
-        return left(MinRestError(res.statusCode, res.body, res.request?.url.toString()));
-      }
+    http.Response res = await http.get(Uri.parse(baseUrl + uri), headers: {
+      "Authorization": "Bearer $token",
+      "Content-Type": "application/json"
+    });
+    if (HttpStatus.isSuccess(res.statusCode)) {
+      return right(deSerializer(jsonDecode(res.body)));
+    } else {
+      return left(
+          MinRestError(res.statusCode, res.body, res.request?.url.toString()));
+    }
     // } catch (e) {
     //   print("Fucking catch ran");
     //   print(e);
@@ -34,7 +34,6 @@ mixin MinRestGetterErrorOr {
   }
 }
 
-
 mixin MinRestGetterErrorOrListOf {
   String get baseUrl;
 
@@ -42,24 +41,27 @@ mixin MinRestGetterErrorOrListOf {
   ///[uri] is resource path after the base url.
   ///Pass your [DataModel.fromJson] function as [deSerializer].
   ///[token] is the bearer token.
-  Future<Either<MinRestError, List<M>>> getErrorOrListOf<M>(String uri, M Function(Map<String, dynamic> json) deSerializer, {String token = ""}) async {
+  Future<Either<MinRestError, List<M>>> getErrorOrListOf<M>(
+      String uri, M Function(Map<String, dynamic> json) deSerializer,
+      {String token = ""}) async {
     // try {
-      http.Response res = await http.get(
-          Uri.parse(baseUrl + uri),
-          headers: {
-            "Authorization" : "Bearer $token",
-            "Content-Type" : "application/json"
-          }
-      );
-      if(HttpStatus.isSuccess(res.statusCode)) {
-        try{
-          return right((jsonDecode(res.body) as List).map((e) => deSerializer(e)).toList());
-        } catch(e) {
-          return left(MinRestError(res.statusCode, res.body, res.request?.url.toString()));
-        }
-      } else {
-        return left(MinRestError(res.statusCode, res.body, res.request?.url.toString()));
+    http.Response res = await http.get(Uri.parse(baseUrl + uri), headers: {
+      "Authorization": "Bearer $token",
+      "Content-Type": "application/json"
+    });
+    if (HttpStatus.isSuccess(res.statusCode)) {
+      try {
+        return right((jsonDecode(res.body) as List)
+            .map((e) => deSerializer(e))
+            .toList());
+      } catch (e) {
+        return left(MinRestError(
+            res.statusCode, res.body, res.request?.url.toString()));
       }
+    } else {
+      return left(
+          MinRestError(res.statusCode, res.body, res.request?.url.toString()));
+    }
     // } catch (e) {
     //   return left(MinRestError(0, "Error Loading Data", e.toString()));
     // }

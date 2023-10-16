@@ -19,11 +19,12 @@ mixin MinRestDeleterErrorOr {
     String token = "",
   }) async {
     try {
-      http.Response res = await http.delete(Uri.parse(baseUrl + uri),
-          headers: {
-            "Authorization": "Bearer $token",
-            "Content-Type": "application/json"
-          },
+      http.Response res = await http.delete(
+        Uri.parse(baseUrl + uri),
+        headers: {
+          "Authorization": "Bearer $token",
+          "Content-Type": "application/json"
+        },
       );
       if (HttpStatus.isSuccess(res.statusCode)) {
         return right(deSerializer(jsonDecode(res.body)));
