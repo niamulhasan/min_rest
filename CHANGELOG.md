@@ -5,3 +5,6 @@
 ## 1.0.1
 - Code formatted
 - Dependency Updated
+
+## 1.0.2
+- Documentation Updated

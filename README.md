@@ -14,7 +14,7 @@ Let's do it int the `main.dart` file
 void main() {  
   WidgetsFlutterBinding.ensureInitialized();  
   ...
-  MinRest.init("https://developer.darc.gg/api");  
+  MinRest.init("https://jsonplaceholder.typicode.com/todos/1");  
   ...
   runApp(Main());  
 }

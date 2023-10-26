@@ -1,7 +1,7 @@
 name: minimal_rest
 description: MinRest acts as a REST Client and Service/Datasource and returns data as your `DataModel` or `Entity` whichever object you want.
 repository: https://github.com/niamulhasan/min_rest
-version: 1.0.1
+version: 1.0.2
 homepage: https://www.niamulhasan.me
 
 
