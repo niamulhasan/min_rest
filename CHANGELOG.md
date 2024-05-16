@@ -8,3 +8,6 @@
 
 ## 1.0.2
 - Documentation Updated
+
+## 1.0.3
+- Multiparty Request Updated from file path param to uint8list param for web compatibility 
