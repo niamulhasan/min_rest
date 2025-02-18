@@ -17,22 +17,34 @@ mixin MinRestDeleterErrorOr {
     required M Function(Map<String, dynamic> json) deSerializer,
     required E Function(Map<String, dynamic> json) errorDeserializer,
     String token = "",
+    bool logResponse = true,
+    bool doUriIncludeBaseUrl = false,
+    bool shouldThrowException = false,
   }) async {
     try {
+      String fullUri = doUriIncludeBaseUrl ? uri : baseUrl + uri;
       http.Response res = await http.delete(
-        Uri.parse(baseUrl + uri),
+        Uri.parse(fullUri),
         headers: {
           "Authorization": "Bearer $token",
           "Content-Type": "application/json"
         },
       );
+      if (logResponse) {
+        print('MinRest: Delete@ ${baseUrl + uri}');
+        print('Response: ${res.body}');
+      }
       if (HttpStatus.isSuccess(res.statusCode)) {
         return right(deSerializer(jsonDecode(res.body)));
       } else {
         return left(errorDeserializer(jsonDecode(res.body)));
       }
     } catch (e) {
-      return left(errorDeserializer(jsonDecode(e.toString())));
+      if (shouldThrowException) {
+        rethrow;
+      } else {
+        return left(errorDeserializer(jsonDecode(e.toString())));
+      }
     }
   }
 }
