@@ -19,21 +19,34 @@ mixin MinRestPatcherErrorOr {
     required M Function(Map<String, dynamic> json) deSerializer,
     required E Function(Map<String, dynamic> json) errorDeserializer,
     String token = "",
+    bool logResponse = true,
+    bool doUriIncludeBaseUrl = false,
+    bool shouldThrowException = false,
   }) async {
     try {
-      http.Response res = await http.patch(Uri.parse(baseUrl + uri),
+      String fullUri = doUriIncludeBaseUrl ? uri : baseUrl + uri;
+      http.Response res = await http.patch(Uri.parse(fullUri),
           headers: {
             "Authorization": "Bearer $token",
             "Content-Type": "application/json"
           },
           body: jsonEncode(data));
+      if(logResponse){
+        print('MinRest: Patch@ ${baseUrl + uri}');
+        print("body $data");
+        print('Response: ${res.body}');
+      }
       if (HttpStatus.isSuccess(res.statusCode)) {
         return right(deSerializer(jsonDecode(res.body)));
       } else {
         return left(errorDeserializer(jsonDecode(res.body)));
       }
     } catch (e) {
-      return left(errorDeserializer(jsonDecode(e.toString())));
+      if(shouldThrowException){
+        rethrow;
+      }else{
+        return left(errorDeserializer(jsonDecode(e.toString())));
+      }
     }
   }
 }

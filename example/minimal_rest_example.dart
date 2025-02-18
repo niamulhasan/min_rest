@@ -1,5 +1,7 @@
 import 'package:minimal_rest/minimal_rest.dart';
 
+import 'failure.dart';
+
 class UserModel {
   final String name;
   final String email;
@@ -26,24 +28,26 @@ Future<void> main() async {
   MinRest.init("https://jsonplaceholder.typicode.com");
 
   //making a get request
-  final tokenOrError = await MinRest().getErrorOr<UserModel>(
-    "/path_to_user_data",
-    (json) => UserModel.fromJson(json),
+  final tokenOrError = await MinRest().getErrorOr<Failure, UserModel>(
+    uri: "/path_to_user_data",
+    deSerializer: (json) => UserModel.fromJson(json),
+    errorDeserializer: (json) => Failure.fromJson(json),
   );
 
   //handling the result
   tokenOrError.fold(
-    (error) => print("Error: ${error.code} - ${error.message}"),
+    (error) => print("Error: ${error.message} - ${error.message}"),
     (user) => print("User: ${user.name} - ${user.email}"),
   );
 
   //making a post request
-  final postData = await MinRest().postErrorOr<UserModel>(
-    "/path_to_user_data",
-    {
+  final postData = await MinRest().postErrorOr<Failure, UserModel>(
+    uri: "/path_to_user_data",
+    deSerializer: (json) => UserModel.fromJson(json),
+    data: {
       "name": "John Doe",
       "email": "example@email.com",
     },
-    (json) => UserModel.fromJson(json),
+    errorDeserializer: (json) => Failure.fromJson(json),
   );
 }

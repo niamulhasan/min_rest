@@ -13,26 +13,53 @@ mixin MinRestPosterErrorOr {
   ///Pass your [dataModel.toJson] as [data].
   ///Pass your [DataModel.fromJson] function as [deSerializer].
   ///[token] is the bearer token.
-  Future<Either<MinRestError, M>> postErrorOr<M>(
-      String uri,
-      Map<String, dynamic> data,
-      M Function(Map<String, dynamic> json) deSerializer,
-      {String token = ""}) async {
-    // try {
-    http.Response res = await http.post(Uri.parse(baseUrl + uri),
-        headers: {
-          "Authorization": "Bearer $token",
-          "Content-Type": "application/json"
-        },
-        body: jsonEncode(data));
-    if (HttpStatus.isSuccess(res.statusCode)) {
-      return right(deSerializer(jsonDecode(res.body)));
-    } else {
-      return left(
-          MinRestError(res.statusCode, res.body, res.request?.url.toString()));
+  Future<Either<E, M>> postErrorOr<E, M>({
+    required String uri,
+    required Map<String, dynamic> data,
+    required M Function(dynamic json) deSerializer,
+    required E Function(Map<String, dynamic> json) errorDeserializer,
+    String? token,
+    bool logResponse = true,
+    bool doUriIncludeBaseUrl = false,
+    bool shouldThrowException = false,
+  }) async {
+    try {
+      String fullUri = doUriIncludeBaseUrl ? uri : baseUrl + uri;
+      http.Response res = await http.post(Uri.parse(fullUri),
+          headers: token == null
+              ? {"Content-Type": "application/json"}
+              : {
+                  "Authorization": "Bearer $token",
+                  "Content-Type": "application/json"
+                },
+          body: jsonEncode(data));
+      if(logResponse){
+        print('MinRest: Post@ ${baseUrl + uri}');
+        print("body $data");
+        print('Response: ${res.body}');
+      }
+      if (HttpStatus.isSuccess(res.statusCode)) {
+        return right(deSerializer(jsonDecode(res.body)));
+      } else {
+        return left(errorDeserializer(jsonDecode(res.body)));
+      }
+    } catch (e) {
+      print("throwing");
+      // return left(errorDeserializer(jsonDecode(e.toString())));
+      if(shouldThrowException){
+        rethrow;
+      }else{
+        try{
+          return left(errorDeserializer(jsonDecode(e.toString())));
+        }
+        catch(e) {
+          return left(errorDeserializer({
+            'status_code': 500,
+            'success': false,
+            'message': e.toString(),
+          }));
+        }
+      }
     }
-    // } catch (e) {
-    //   return left(MinRestError(0, "Error Loading Data", e.toString()));
-    // }
   }
 }
